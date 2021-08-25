@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div th:fragment="nav">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid d-flex flex-row justify-content-around">
+                    <a class="navbar-brand" href="/">
+                        <img width="60px" height="60px" src="/img/logo.png"/>
+                        Divisapp
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <div th:if="${session.usersession == null}" class="d-flex">
+                                <li class="nav-item" style="margin-right: 5px">
+                                    <a class="btn btn-primary" aria-current="page" th:href="@{/user/form}">Registrarse</a>
+                                </li>
+                                <li class="flex-end nav-item">
+                                    <div th:include="fragments/front :: login-modal"></div>
+                                </li>
+                            </div>
+                            <div th:if="${session.usersession != null}">
+                                <div class="btn-group">
+                                    <button th:text="${session.usersession.name + ' ' + session.usersession.surname}" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" th:href="@{/user/form(id=${session.usersession.id})}">Mis Datos</a></li>
+                                        <li sec:authorize="hasAnyRole('ROLE_ADMIN')" ><a th:href="@{/user/list}" class="dropdown-item">Lista de alumnos</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" th:href="@{/logout}">Salir</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div th:fragment="login-modal">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Login
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form th:action="@{/signin-check}" method="POST">
+                            <div class="modal-body">
+                                <div class="input-group flex-nowrap mb-3">
+                                    <span class="input-group-text" id="addon-wrapping">Mail</span>
+                                    <input type="text" class="form-control" name="email" placeholder="Mail" aria-label="Username" aria-describedby="addon-wrapping">
+                                </div>
+                                <div class="input-group flex-nowrap">
+                                    <span class="input-group-text" id="addon-wrapping">Password</span>
+                                    <input type="password" class="form-control" name="password" placeholder="Password" aria-label="Password" aria-describedby="addon-wrapping">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Entrar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="upload">
+            <div class="accordion mb-5" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            Subir archivos, carpetas
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div th:include="fragments/folder :: create-btn"></div>
+                            <hr />
+                            <div th:include="fragments/file :: form"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

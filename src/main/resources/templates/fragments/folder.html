@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div th:fragment="create-btn">
+            <form class="mb-4" th:action="@{/folder/save}" method="POST" th:object="${folder}">
+                <input type="hidden" th:value="${user.id}" name="userId" />
+                <input th:if="${folder.id != null}" type="hidden" th:value="${folder.id}" name="parentFolderId" />
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalFolder">
+                    Nueva carpeta
+                </button>
+                <div class="modal fade" id="exampleModalFolder" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Nueva carpeta</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3 row">
+                                    <label for="input" class="col-sm-2 col-form-label">Nombre</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="input" th:field="*{name}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Crear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div th:fragment="modal(name, id, i)">
+            <div class="modal fade" th:id="${'folderModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" th:text="${'Acciones para ' + name}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <button type="button" class="btn btn-primary m-auto mt-1 mb-1" th:data-bs-toggle="modal" th:data-bs-target="${'#editFolderModal' + i}">
+                            Editar
+                        </button>
+                        <div th:include="fragments/folder :: edit-modal(${name}, ${id}, ${i})"></div>
+                        <button type="button" class="btn btn-primary m-auto mt-1 mb-1" th:data-bs-toggle="modal" th:data-bs-target="${'#deleteFolderModal' + i}">
+                            Eliminar
+                        </button>
+                        <div th:include="fragments/folder :: delete-modal(${name}, ${id}, ${i})"></div>
+                        <button type="button" class="btn btn-primary m-auto mt-1 mb-1" th:data-bs-toggle="modal" th:data-bs-target="${'#shareFolderModal' + i}">
+                            Compartir
+                        </button>
+                        <div th:include="fragments/folder :: share-modal(${name}, ${id}, ${i})"></div>
+                        <form class="m-auto" th:action="@{/folder/level-up}" method="POST">
+                            <input type="hidden" th:value="${id}" name="folderId" />
+                            <button type="submit" class="btn btn-primary m-auto mt-1 mb-1">Subir de nivel</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="edit-modal(name, id, i)">
+            <div class="modal fade" th:id="${'editFolderModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" th:text="${'Editar ' + name}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form class="form m-2" th:action="@{/folder/edit}" method="POST">
+                            <input type="hidden" th:value="${id}" name="folderId"/>
+                            <label>Nuevo nombre</label>
+                            <input class="form-control w-75 mb-3 mt-1" id="exampleFormControlInput1" th:value="${name}" name="folderName"/>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Editar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="delete-modal(name, id, i)">
+            <div class="modal fade" th:id="${'deleteFolderModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" id="exampleModalLabel" th:text="${'¿Estás seguro de querer eliminar ' + name + '?'}"></h5>
+                                <h5 class="modal-title" id="exampleModalLabel">Se va a perder todo su contenido :/</h5>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-footer">
+                            <form class="form text-center" th:action="@{/folder/delete}" method="POST">
+                                <input type="hidden" th:value="${id}" name="folderId"/>
+                                <button type="submit" class="btn btn-primary">Si, rey</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="share-modal(name, id, i)">
+            <div class="modal fade" th:id="${'shareFolderModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" id="exampleModalLabel" th:text="${'Compartir ' + name}"></h5>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form class="form" th:action="@{/folder/share}" method="POST">
+                            <div class="w-75 m-3">
+                                <input type="hidden" th:value="${id}" name="folderId" />
+                                <label for="exampleInputEmail1">Mail</label>
+                                <input type="email" class="form-control mt-2" id="exampleInputEmail1" name="email" aria-describedby="emailHelp" placeholder="Mail">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Compartir</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="list">
+            <div class="d-flex">
+                <div th:each="folder, i : ${folders}" class="m-1">
+                    <a class="btn btn-secondary folder box" th:href="@{/folder/} + ${folder.id}" th:text="${folder.name}"></a>
+                    <div th:include="fragments/folder :: modal(${folder.name}, ${folder.id}, ${i.index})"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+
+        <div th:fragment="modal(fullName, phone, fatherPhone, motherPhone, adress, id, i)">
+            <button type="button" th:text="${fullName}" class="btn btn-primary mb-3" data-bs-toggle="modal" th:data-bs-target="${'#userModal' + i}"></button>
+
+            <!-- Modal -->
+            <div class="modal fade" th:id="${'userModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" th:text="${fullName}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6>Teléfonos: </h6>
+                            <div class="m-3">
+                                <p th:text="${'Alumno: ' + phone}"></p>
+                                <p th:text="${'Papá: ' + fatherPhone}"></p>
+                                <p th:text="${'Mamá: ' + motherPhone}"></p>
+                            </div>
+                            <h6>Domicilio: </h6>
+                            <p class="m-3" th:text="${adress}"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <a th:href="@{/user/profile/} + ${id}" class="btn btn-primary">Ir al perfil</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

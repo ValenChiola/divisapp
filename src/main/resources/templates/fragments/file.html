@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div th:fragment="form">
+            <form class="form" th:action="@{/file/save}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="userId" th:value="${user.id}"/>
+                <input th:if="${folder != null}" type="hidden" th:value="${folder.id}" name="folderId" />
+                <h3 th:text="${error}"></h3>
+                <div class="input-group mb-3 w-50">
+                    <input type="file" multiple class="form-control w-75" name="files" id="inputGroupFile01">
+                </div>
+                <button class="btn btn-primary mb-5" id="btn">Subir</button>
+                <button class="btn btn-primary" id="loading" style="display: none" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Cargando...
+                </button>
+            </form>
+        </div>
+
+        <div th:fragment="modal(name, id, i)">
+            <div class="mt-4 mt-4 d-flex justify-content-around">
+                <button type="button" class="btn btn-primary" style="margin-right: 5px" th:data-bs-toggle="modal" th:data-bs-target="${'#exampleModal' + i}">
+                    Ver
+                </button>
+                <button type="button" class="btn btn-danger" th:data-bs-toggle="modal" th:data-bs-target="${'#deleteModal' + i}">
+                    Eliminar
+                </button>
+            </div>
+            <div th:include="fragments/file :: delete-modal(${name}, ${id}, ${i})"></div>
+            <div class="modal fade" th:id="${'exampleModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" th:text="${name}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img width="200" height="200" th:src="@{/file/load/} + ${id}">
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-primary" th:href="@{/file/load/} + ${id}" target="blank_">Ver en otra página</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="delete-modal(name, id, i)">
+            <div class="modal fade" th:id="${'deleteModal' + i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel" th:text="${'¿Estás seguro que querés borrar ' + name + '?'}"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img width="200" height="200" th:src="@{/file/load/} + ${id}">
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-danger" th:href="@{/file/delete/} + ${id}" >Si</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:fragment="list">
+            <!--            <div class="d-flex mb-5">
+                            <div class="card shadow mt-4 w-50" th:each="file, i : ${files}" style="margin-right: 10px" >
+                                <div class="d-flex flex-row justify-content-between card-header py-3">
+                                    <div class="flex-column">
+                                        <div class="d-flex">
+                                            <h5 class="m-0 font-weight-bold text-primary" th:text="${file.name}"></h5>
+                                        </div>
+                                        <h7 class="m-0 font-weight-bold" th:text="'Subido el día: ' + ${file.createdAt}"></h7>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div th:include="fragments/file :: modal(${file.name}, ${file.id}, ${i.index})"></div>
+                                </div>
+                            </div>
+                        </div>-->
+            <div class="d-flex flex-column">
+                <div class="card text-center mt-2 mb-3 col-sm-10" th:each="file, i : ${files}">
+                    <div class="card-header">
+                        Archivo
+                    </div>
+                    <div class="card-body m-auto">
+                        <h5 class="card-title" th:text="${file.name}"></h5>
+                        <div th:include="fragments/file :: modal(${file.name}, ${file.id}, ${i.index})"></div>
+                    </div>
+                    <div class="card-footer text-muted" th:text="${file.createdAt}"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
