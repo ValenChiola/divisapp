@@ -73,7 +73,7 @@ public class FileConverter extends Converter<FileModel, File> {
         return models;
     }
     
-    public File multiparFileToFile(MultipartFile multipartFile) throws IOException {
+    public File multipartFileToFile(MultipartFile multipartFile) throws IOException {
         
         File file = new File();
         
@@ -82,6 +82,17 @@ public class FileConverter extends Converter<FileModel, File> {
         file.setMime(multipartFile.getContentType());
         
         return file;
+    }
+    
+    public List<File> multipartFilesToFiles(List<MultipartFile> multipartFiles) throws IOException {
+        
+        List<File> files = new ArrayList<>();
+        
+        for (MultipartFile multipartFile : multipartFiles) {
+            files.add(multipartFileToFile(multipartFile));
+        }
+        
+        return files;
     }
 
 }

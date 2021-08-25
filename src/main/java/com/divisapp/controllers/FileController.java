@@ -69,7 +69,7 @@ public class FileController {
     }
 
     @PostMapping("/save")
-    public String save(@RequestParam List<MultipartFile> files, @RequestParam String userId, @RequestParam(required = false) String folderId) {
+    public String save(@RequestParam List<MultipartFile> multipartFiles, @RequestParam String userId, @RequestParam(required = false) String folderId) {
 
         String url = "/user/profile/" + userId;
 
@@ -81,14 +81,10 @@ public class FileController {
                 folder = folderService.getById(folderId);
                 url = "/folder/" + folderId;
             }
-
-            for (MultipartFile multipartFile : files) {
-                if (multipartFile.isEmpty()) continue;
-                File file = fileConverter.multiparFileToFile(multipartFile);
-                file.setUser(user);
-                file.setFolder(folder);
-                fileService.save(file);
-            }
+            
+            List<File> files = fileConverter.multipartFilesToFiles(multipartFiles);
+            
+            fileService.saveAll(files, user, folder);
 
         } catch (IOException | WebException e) {
             e.printStackTrace();

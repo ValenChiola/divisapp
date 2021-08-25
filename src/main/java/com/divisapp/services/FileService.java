@@ -3,6 +3,7 @@ package com.divisapp.services;
 import com.divisapp.converters.FileConverter;
 import com.divisapp.entities.File;
 import com.divisapp.entities.Folder;
+import com.divisapp.entities.User;
 import com.divisapp.errors.WebException;
 import com.divisapp.models.FileModel;
 import com.divisapp.repositories.FileRepository;
@@ -13,6 +14,7 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -42,6 +44,16 @@ public class FileService {
         }
 
         return fileRepository.save(file);
+    }
+
+    @Transactional(rollbackOn = {WebException.class, Exception.class})
+    public void saveAll(List<File> files, User user, Folder folder) throws WebException {
+        for (File file : files) {
+            if (file.isEmpty()) continue;
+            file.setUser(user);
+            file.setFolder(folder);
+            save(file);
+        }
     }
 
     @Transactional(rollbackOn = {WebException.class, Exception.class})

@@ -36,5 +36,9 @@ public class File {
     
     @ManyToOne
     private Folder folder;
+
+    public boolean isEmpty() {
+        return content.length == 0;
+    }
     
 }
